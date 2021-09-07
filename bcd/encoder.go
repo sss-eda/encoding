@@ -20,10 +20,17 @@ func (enc *encoder) Write(p []byte) (n int, err error) {
 	b := make([]byte, len(p))
 
 	for i := 0; i < len(p); i++ {
-		b[i] = (p[i] / 10 << 4) + p[i]%10
+		b[i] = Encode(p[i])
 	}
 
 	n, err = enc.dst.Write(b)
 
 	return
+}
+
+// Encode TODO
+func Encode(p byte) byte {
+	b := (p / 10 << 4) + p%10
+
+	return b
 }

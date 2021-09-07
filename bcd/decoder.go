@@ -24,8 +24,15 @@ func (dec *decoder) Read(p []byte) (n int, err error) {
 	}
 
 	for i := 0; i < n; i++ {
-		p[i] = ((b[i] & 0xf0 >> 4) * 10) + (b[i] & 0x0f)
+		p[i] = Decode(b[i])
 	}
 
 	return
+}
+
+// Decode TODO
+func Decode(b byte) byte {
+	p := ((b & 0xf0 >> 4) * 10) + (b & 0x0f)
+
+	return p
 }
