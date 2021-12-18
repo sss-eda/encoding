@@ -27,3 +27,15 @@ func (enc *encoder) Write(p []byte) (n int, err error) {
 
 	return
 }
+
+func Encode(p []byte) (n int, err error) {
+	b := make([]byte, len(p))
+
+	for i := 0; i < len(p); i++ {
+		b[i] = (p[i] / 10 << 4) + p[i]%10
+	}
+
+	n, err = enc.dst.Write(b)
+
+	return
+}

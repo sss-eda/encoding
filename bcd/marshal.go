@@ -1,0 +1,3 @@
+package bcd
+
+type Marshal() 
