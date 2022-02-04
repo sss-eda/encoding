@@ -1,6 +1,7 @@
 package bcd
 
 import (
+	"fmt"
 	"io"
 )
 
@@ -17,20 +18,28 @@ func NewEncoder(w io.Writer) io.Writer {
 
 // Write TODO
 func (enc *encoder) Write(p []byte) (n int, err error) {
-	b := make([]byte, len(p))
-
-	for i := 0; i < len(p); i++ {
-		b[i] = Encode(p[i])
+	var b byte
+	for n = 0; n < len(p); n++ {
+		b, err = Encode(p[n])
+		if err != nil {
+			return
+		}
+		n, err = enc.dst.Write([]byte{b})
+		if err != nil {
+			return
+		}
 	}
-
-	n, err = enc.dst.Write(b)
 
 	return
 }
 
 // Encode TODO
-func Encode(p byte) byte {
+func Encode(p byte) (byte, error) {
+	if p > 99 {
+		return 0xFF, fmt.Errorf("can't convert to BCD for p > 99")
+	}
+
 	b := (p / 10 << 4) + p%10
 
-	return b
+	return b, nil
 }

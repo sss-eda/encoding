@@ -1,6 +1,7 @@
 package bcd
 
 import (
+	"fmt"
 	"io"
 )
 
@@ -18,21 +19,30 @@ func NewDecoder(r io.Reader) io.Reader {
 // Read TODO
 func (dec *decoder) Read(p []byte) (n int, err error) {
 	b := make([]byte, len(p))
+
 	n, err = dec.src.Read(b)
 	if err != nil {
 		return
 	}
 
-	for i := 0; i < n; i++ {
-		p[i] = Decode(b[i])
+	m := n
+	for n = 0; n < m; n++ {
+		p[n], err = Decode(b[n])
+		if err != nil {
+			return
+		}
 	}
 
 	return
 }
 
 // Decode TODO
-func Decode(b byte) byte {
-	p := ((b & 0xf0 >> 4) * 10) + (b & 0x0f)
+func Decode(b byte) (byte, error) {
+	p := ((b >> 4) * 10) + (b & 0x0f)
 
-	return p
+	if p > 99 {
+		return 0xFF, fmt.Errorf("invalid BCD byte: overflow")
+	}
+
+	return p, nil
 }
